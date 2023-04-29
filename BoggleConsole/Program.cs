@@ -1,16 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BoggleConsole
 {
 	internal class Program
 	{
-		static void Main(string[] args)
+		public static void Main(string[] args)
 		{
-			Console.WriteLine("Hello Boggle world.");
+			string board = m_board.GenerateBoard(print: true);
+			m_board.PrintBoard(board);
+
+			Console.WriteLine("\nHit a key to exit.");
+			Console.ReadKey(intercept: true);
 		}
+
+
+		private static readonly Board4x4 m_board = new Board4x4();
 	}
 }
