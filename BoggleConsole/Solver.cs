@@ -50,6 +50,7 @@ namespace BoggleConsole
 			}
 
 			ConsoleWriteLine();
+			WordList = WordList.OrderBy(x => x.Length).ThenBy(x => x).ToList();
 		}
 
 
