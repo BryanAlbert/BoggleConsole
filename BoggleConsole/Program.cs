@@ -31,6 +31,7 @@ namespace BoggleConsole
 				{
 					Board = BoggleBoard.LoadBoardFromFile(BoardFileName);
 					Board.Scoring = FindScoring();
+					Board.Print = VerboseOutput;
 				}
 
 				Console.WriteLine();
@@ -49,7 +50,10 @@ namespace BoggleConsole
 				for (int word = 0; word < solver.WordList.Count; word++)
 				{
 					int wordLength = solver.WordList[word].Length;
-					int score = wordLength > Board.Scoring.Count ? Board.Scoring.Last() : Board.Scoring[wordLength];
+					int score = wordLength >= Board.Scoring.Count ? Board.Scoring.Last() : Board.Scoring[wordLength - 1];
+					if (score < 0)
+						score *= -wordLength;
+
 					totalScore += score;
 					if (words++ % 10 == 0 || word == solver.WordList.Count - 1)
 						Console.WriteLine($"{solver.WordList[word]} ({score})");
@@ -71,17 +75,16 @@ namespace BoggleConsole
 		}
 
 
-		public static bool VerboseOutput { get; private set; }
-		public static bool Step { get; private set; }
 		public static int? GameNameIndex { get; private set; }
 		public static int? MinWordSize { get; private set; }
 		public static string BoardFileName { get; private set; }
 		public static BoggleBoard Board { get; private set; }
-
+		public static bool VerboseOutput { get; private set; }
+		public static bool Step { get; private set; }
+		public static int? Seed { get; private set; }
 
 		private static void LoadGameNames()
 		{
-			int index = 0;
 			m_gameNames.Add(Classic4x4.m_gameName);
 			m_gameNames.Add(New4x4.m_gameName);
 			m_gameNames.Add(German4x4.m_gameName);
@@ -134,11 +137,13 @@ namespace BoggleConsole
 					return false;
 			}
 
-			Board.Seed = GameNameIndex;
-			Board.Print = VerboseOutput;
 			if (MinWordSize.HasValue)
 				Board.MinimumWordSize = MinWordSize.Value;
+			
+			if (Seed.HasValue)
+				Board.Seed = Seed;
 
+			Board.Print = VerboseOutput;
 			return true;
 		}
 
@@ -171,6 +176,13 @@ namespace BoggleConsole
 				Console.WriteLine($"{index + 1}: {m_gameNames[index]}");
 
 			Console.WriteLine($"\nIf Game and File aren't specified, {m_gameNames[0]} is played.");
+			Console.WriteLine("The board file format uses spaces to deliniate letters, multiple lines are okay, Q represents Qu");
+			Console.Write("and these numbers represent letter combinations: 0 = Blank, ");
+			int number = 1;
+			for (; number < BoggleBoard.m_comboLetters.Length - 1; number++)
+				Console.Write($"{number}={BoggleBoard.m_comboLetters[number]}, ");
+
+			Console.WriteLine($"{number}={BoggleBoard.m_comboLetters.Last()}");
 		}
 
 		private static bool ProcessCommandLine(List<string> args)
@@ -188,7 +200,7 @@ namespace BoggleConsole
 							if (ParseInt(args, out int seed, "\nError: -Seed switch must be followed by an integer",
 								"\nError: -Seed switch must be followed by an integer, could not parse: {0}"))
 							{
-								GameNameIndex = seed;
+								Seed = seed;
 								break;
 							}
 

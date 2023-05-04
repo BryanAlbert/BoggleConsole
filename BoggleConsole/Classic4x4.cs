@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BoggleConsole
 {
@@ -16,7 +15,7 @@ namespace BoggleConsole
 				"AEANEG", "AHSPCO", "ASPFFK", "OBJOAB",
 				"IOTMUC", "RYVDEL", "LREIXD", "EIUNES",
 				"WNGEEH", "LNHNRZ", "TSTIYD", "OWTOAT",
-				"ERTTYL", "TOESSI", "TERWHV", "NUIHMQ"
+				"ERTTYL", "TOESSI", "TERWHV", "NUIHM1"
 			};
 		}
 

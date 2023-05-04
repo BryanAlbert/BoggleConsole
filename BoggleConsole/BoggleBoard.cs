@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace BoggleConsole
 {
@@ -9,10 +10,11 @@ namespace BoggleConsole
 	{
 		public static BoggleBoard LoadBoardFromFile(string boardFileName)
 		{
+			Console.WriteLine($"Loading board from {boardFileName}");
 			string letters = string.Empty;
 			foreach (string line in File.ReadAllLines(boardFileName).ToList())
 				foreach (string letter in line.Split(' '))
-					letters += letter;
+					letters += SetComboLetter(letter);
 
 			double edgeLength = Math.Sqrt(letters.Length);
 			if ((int) edgeLength != edgeLength)
@@ -30,6 +32,46 @@ namespace BoggleConsole
 			return board;
 		}
 
+		private static string SetComboLetter(string letter)
+		{
+			if (letter.ToUpper() == "Q")
+				return "1";
+
+			string camelCase = letter.Length == 1 ? letter.ToUpper() :
+				letter.Substring(0, 1).ToUpper() + letter.Substring(1, 1).ToLower();
+
+			for (int index = 0; index < m_comboLetters.Length; index++)
+				if (m_comboLetters[index] == camelCase)
+					return index.ToString();
+
+			return letter;
+		}
+
+		public static string RenderWord(string word)
+		{
+			StringBuilder builder = new StringBuilder();
+			foreach (char letter in word)
+			{
+				if (int.TryParse(letter.ToString(), out int number))
+					builder.Append(m_comboLetters[number]);
+				else
+					builder.Append(letter);
+			}
+
+			return builder.ToString();
+		}
+
+		public static string RenderLetter(char letter, bool padding = false)
+		{
+			if (int.TryParse(letter.ToString(), out int number))
+				return m_comboLetters[number];
+			else
+				return $"{letter}{(padding ? " " : "")}";
+		}
+
+
+		public static string[] m_comboLetters = { " ", "Qu", "In", "Th", "Er", "He", "An" };
+
 
 		public string GameName { get; set; }
 		public int EdgeLength { get => m_edgeLength; set { m_edgeLength = value; CubeCount = value * value; } }
@@ -40,6 +82,7 @@ namespace BoggleConsole
 		public List<string> Cubes { get; set; }
 		public List<int> Scoring { get; set; } = new List<int>();
 		public string Letters { get; private set; }
+
 
 		public void GenerateBoard()
 		{
@@ -59,7 +102,9 @@ namespace BoggleConsole
 				Letters += Cubes[cube][side];
 				if (Print)
 				{
-					Console.Write($"Cube {PrintNumber(cube + 1)} ({Cubes[cube]}), letter: {Cubes[cube][side]}, ");
+					Console.Write($"Cube {PrintNumber(cube + 1)} ({RenderWord(Cubes[cube])})" +
+						$" => {RenderLetter(Cubes[cube][side])}, ");
+
 					if ((index + 1) % EdgeLength == 0)
 						Console.WriteLine();
 				}
@@ -83,7 +128,7 @@ namespace BoggleConsole
 			for (int row = 0; row < EdgeLength; row++)
 			{
 				for (int column = 0; column < EdgeLength; column++)
-					Console.Write($"{Letters[row * EdgeLength + column]} ");
+					Console.Write($"{RenderLetter(Letters[row * EdgeLength + column], true)} ");
 
 				Console.WriteLine();
 			}

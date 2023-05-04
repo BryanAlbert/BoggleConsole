@@ -14,7 +14,7 @@ namespace BoggleConsole
 			{
 				"AAEIOW", "AIMORS", "EGNJUY", "ABILTN",
 				"ACDEMP", "EGINTV", "GELRUW", "ELPNTU",
-				"DENOST", "ACEHRS", "DBJMOQ", "EEFHIS",
+				"DENOST", "ACEHRS", "DBJMO1", "EEFHIS",
 				"EHINRS", "EKNOTZ", "ADENVZ", "AIFKRX"
 			};
 		}

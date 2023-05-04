@@ -41,12 +41,13 @@ namespace BoggleConsole
 				string word = $"{Board[index]}";
 				int[] path = new int[Board.Length];
 				path[index] = 1;
-				ConsoleWriteLine($"Checking from {word} at index {index}:");
-				ConsoleWrite(word);
-				if (FindWordsAt(path, word, index))
-					ConsoleWriteLine("\b ");
-				else
-					ConsoleWrite("\b");
+				string render = BoggleBoard.RenderLetter(word[0]);
+				ConsoleWriteLine($"Checking from {render} at index {index}:");
+				ConsoleWrite(render);
+				bool found = FindWordsAt(path, word, index);
+				ConsoleEraseLetter(render);
+				if (found)
+					ConsoleWriteLine();
 			}
 
 			ConsoleWriteLine();
@@ -69,14 +70,16 @@ namespace BoggleConsole
 				if (index == -1)
 					continue;
 
-				string test = word + m_board[index];
-				bool? isWord = IsWord(test, index);
+				string letter = BoggleBoard.RenderLetter(m_board[index]);
+				ConsoleWrite(letter);
+				string test = word + letter;
+				bool? isWord = IsWord(test);
 				if (Step)
 					Console.ReadKey(intercept: true);
 
 				if (isWord == false)
 				{
-					ConsoleWrite("\b \b");
+					ConsoleEraseLetter(letter);
 					continue;
 				}
 
@@ -89,12 +92,11 @@ namespace BoggleConsole
 					found = true;
 				}
 
-				word = test;
-				path[index] = word.Length;
-				found = FindWordsAt(path, word, index) || found;
-				word = word.Substring(0, word.Length - 1);
-				path[index] = 0;
-				ConsoleWrite("\b \b");
+				int[] pathCopy = new int[path.Length];
+				Array.Copy(path, pathCopy, Board.Length);
+				pathCopy[index] = word.Length;
+				found = FindWordsAt(pathCopy, word + letter, index) || found;
+				ConsoleEraseLetter(letter);
 			}
 
 			return found;
@@ -136,9 +138,8 @@ namespace BoggleConsole
 			return index != -1 && path[index] == 0 ? index : -1;
 		}
 
-		private bool? IsWord(string word, int index)
+		private bool? IsWord(string word)
 		{
-			ConsoleWrite(m_board[index]);
 			foreach (string test in m_dictionary)
 			{
 				if (string.Compare(test, word) < 0)
@@ -147,10 +148,7 @@ namespace BoggleConsole
 				if (test == word)
 					return true;
 
-				if (test.Length <= word.Length || test.Substring(0, word.Length) != word)
-					return false;
-
-				return null;
+				return test.Length <= word.Length || test.Substring(0, word.Length) != word ? false : (bool?) null;
 			}
 
 			return false;
@@ -188,10 +186,10 @@ namespace BoggleConsole
 				Console.Write(message);
 		}
 
-		private void ConsoleWrite(char message)
+		private void ConsoleEraseLetter(string letter)
 		{
 			if (Verbose)
-				Console.Write(message);
+				ConsoleWrite(letter.Length == 1 ? "\b \b" : "\b\b  \b\b");
 		}
 
 
