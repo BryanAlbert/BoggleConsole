@@ -8,7 +8,7 @@ namespace BoggleConsole
 		{
 			GameName = m_gameName;
 			EdgeLength = 6;
-			MinimumWordSize = 4;
+			MinWordSize = 4;
 			Scoring = new List<int> { 0, 0, 0, 1, 2, 3, 5, 11, -2 };
 			Cubes = new List<string>
 			{

@@ -26,6 +26,7 @@ namespace BoggleConsole
 			}
 		}
 
+		public int MinWordSize { get; set; }
 		public bool Step { get; set; }
 		public bool Verbose { get; set; }
 
@@ -42,6 +43,9 @@ namespace BoggleConsole
 				int[] path = new int[Board.Length];
 				path[index] = 1;
 				string render = BoggleBoard.RenderLetter(word[0]);
+				if (render == "  ")
+					continue;
+
 				ConsoleWriteLine($"Checking from {render} at index {index}:");
 				ConsoleWrite(render);
 				bool found = FindWordsAt(path, word, index);
@@ -71,9 +75,12 @@ namespace BoggleConsole
 					continue;
 
 				string letter = BoggleBoard.RenderLetter(m_board[index]);
+				if (letter == "  ")
+					continue;
+
 				ConsoleWrite(letter);
 				string test = word + letter;
-				bool? isWord = IsWord(test);
+				bool? isWord = IsWord(test.Trim());
 				if (Step)
 					Console.ReadKey(intercept: true);
 
@@ -83,7 +90,7 @@ namespace BoggleConsole
 					continue;
 				}
 
-				if (isWord == true)
+				if (isWord == true && test.Length >= MinWordSize)
 				{
 					if (!WordList.Contains(test))
 						WordList.Add(test);
@@ -94,8 +101,8 @@ namespace BoggleConsole
 
 				int[] pathCopy = new int[path.Length];
 				Array.Copy(path, pathCopy, Board.Length);
-				pathCopy[index] = word.Length;
-				found = FindWordsAt(pathCopy, word + letter, index) || found;
+				pathCopy[index] = test.Length;
+				found = FindWordsAt(pathCopy, test, index) || found;
 				ConsoleEraseLetter(letter);
 			}
 
@@ -148,7 +155,7 @@ namespace BoggleConsole
 				if (test == word)
 					return true;
 
-				return test.Length <= word.Length || test.Substring(0, word.Length) != word ? false : (bool?) null;
+				return (test.Length <= word.Length || test.Substring(0, word.Length) != word) ? false : (bool?) null;
 			}
 
 			return false;
@@ -166,7 +173,7 @@ namespace BoggleConsole
 
 		private bool AtLeftEdge(int from)
 		{
-			return (from + 4) % m_edgeLength == 0;
+			return (from + m_edgeLength) % m_edgeLength == 0;
 		}
 
 		private bool AtTopEdge(int from)

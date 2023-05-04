@@ -39,6 +39,7 @@ namespace BoggleConsole
 				Solver solver = new Solver
 				{
 					Board = Board.Letters,
+					MinWordSize = Board.MinWordSize,
 					Step = Step,
 					Verbose = VerboseOutput
 				};
@@ -138,7 +139,7 @@ namespace BoggleConsole
 			}
 
 			if (MinWordSize.HasValue)
-				Board.MinimumWordSize = MinWordSize.Value;
+				Board.MinWordSize = MinWordSize.Value;
 			
 			if (Seed.HasValue)
 				Board.Seed = Seed;
@@ -163,12 +164,12 @@ namespace BoggleConsole
 
 		private static void Usage()
 		{
-			Console.WriteLine("\nUsage: [-?|-help][-Seed seed][-Game numbe][-File filename][-MinWordSize min][-Verbose][-Step]");
+			Console.WriteLine("\nUsage: [-?|-help][-Seed seed][-Game numbe][-File filename][-WordSize min][-Verbose][-Step]");
 			Console.WriteLine("-help           display this usage message");
 			Console.WriteLine("-Seed           int, seed the random number generator with seed");
 			Console.WriteLine("-Game           the number of the game to play, see below");
 			Console.WriteLine("-File           load the board from the file specified by filename");
-			Console.WriteLine("-MinWordSize    int, set the minimum word size to min");
+			Console.WriteLine("-WordSize       int, set the minimum word size to min");
 			Console.WriteLine("-Verbose        show output for generating and solving the game");
 			Console.WriteLine("-Step           pause when checking each letter");
 			Console.WriteLine("\nBoggle game names:");
@@ -224,7 +225,7 @@ namespace BoggleConsole
 
 							BoardFileName = args[0];
 							break;
-						case "minwordsize":
+						case "wordsize":
 							if (ParseInt(args, out int minWordSize, "\nError: -MinWordSize switch must be followed by an integer",
 								"\nError: -MinWordSize switch must be followed by an integer, could not parse: {0}"))
 							{

@@ -13,7 +13,7 @@ namespace BoggleConsole
 			Console.WriteLine($"Loading board from {boardFileName}");
 			string letters = string.Empty;
 			foreach (string line in File.ReadAllLines(boardFileName).ToList())
-				foreach (string letter in line.Split(' '))
+				foreach (string letter in line.Replace("  ", " ").Split(' '))
 					letters += SetComboLetter(letter);
 
 			double edgeLength = Math.Sqrt(letters.Length);
@@ -34,6 +34,9 @@ namespace BoggleConsole
 
 		private static string SetComboLetter(string letter)
 		{
+			if (letter.Length == 0)
+				return "0";
+
 			if (letter.ToUpper() == "Q")
 				return "1";
 
@@ -70,12 +73,12 @@ namespace BoggleConsole
 		}
 
 
-		public static string[] m_comboLetters = { " ", "Qu", "In", "Th", "Er", "He", "An" };
+		public static string[] m_comboLetters = { "  ", "Qu", "In", "Th", "Er", "He", "An" };
 
 
 		public string GameName { get; set; }
 		public int EdgeLength { get => m_edgeLength; set { m_edgeLength = value; CubeCount = value * value; } }
-		public int MinimumWordSize { get; set; }
+		public int MinWordSize { get; set; }
 		public int? Seed { get; set; }
 		public bool Print { get; set; }
 		public int CubeCount { get; private set; }
