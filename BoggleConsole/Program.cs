@@ -31,6 +31,7 @@ namespace BoggleConsole
 				{
 					Board = BoggleBoard.LoadBoardFromFile(BoardFileName);
 					Board.Scoring = FindScoring();
+					Board.MinWordSize = Board.Scoring.Select((x, i) => new { x, i }).First(y => y.x > 0).i + 1;
 					Board.Print = VerboseOutput;
 				}
 
@@ -39,13 +40,20 @@ namespace BoggleConsole
 				Solver solver = new Solver
 				{
 					Board = Board.Letters,
-					MinWordSize = Board.MinWordSize,
+					MinWordSize = MinWordSize ?? Board.MinWordSize,
 					Step = Step,
 					Verbose = VerboseOutput
 				};
 
+				if (Pause)
+				{
+					Console.Write("\nHit a key to see the solution...");
+					Console.ReadKey(intercept: true);
+				}
+
+				DateTime start = DateTime.Now;
 				solver.Solve();
-				Console.WriteLine("Words (points):");
+				Console.WriteLine($"Time to solve {(int) (DateTime.Now - start).TotalMilliseconds}ms.\nWords (points):");
 				int words = 1;
 				int totalScore = 0;
 				for (int word = 0; word < solver.WordList.Count; word++)
@@ -69,9 +77,16 @@ namespace BoggleConsole
 				Console.WriteLine($"\nNotImplementedException: {exception.Message}\n");
 				return -3;
 			}
+			catch (Exception exception)
+			{
+				Console.WriteLine($"\nException: {exception.Message}\n");
+				return -4;
+			}
 
+#if false
 			Console.WriteLine("\nHit a key to exit.");
 			Console.ReadKey(intercept: true);
+#endif
 			return 0;
 		}
 
@@ -80,6 +95,7 @@ namespace BoggleConsole
 		public static int? MinWordSize { get; private set; }
 		public static string BoardFileName { get; private set; }
 		public static BoggleBoard Board { get; private set; }
+		public static bool Pause { get; private set; }
 		public static bool VerboseOutput { get; private set; }
 		public static bool Step { get; private set; }
 		public static int? Seed { get; private set; }
@@ -164,12 +180,13 @@ namespace BoggleConsole
 
 		private static void Usage()
 		{
-			Console.WriteLine("\nUsage: [-?|-help][-Seed seed][-Game numbe][-File filename][-WordSize min][-Verbose][-Step]");
+			Console.WriteLine("\nUsage: [-?|-help][-Seed seed][-Game numbe][-File filename][-WordSize min][-Pause][-Verbose][-Step]");
 			Console.WriteLine("-help           display this usage message");
 			Console.WriteLine("-Seed           int, seed the random number generator with seed");
 			Console.WriteLine("-Game           the number of the game to play, see below");
 			Console.WriteLine("-File           load the board from the file specified by filename");
 			Console.WriteLine("-WordSize       int, set the minimum word size to min");
+			Console.WriteLine("-Pause          pause before showing the solution");
 			Console.WriteLine("-Verbose        show output for generating and solving the game");
 			Console.WriteLine("-Step           pause when checking each letter");
 			Console.WriteLine("\nBoggle game names:");
@@ -235,6 +252,9 @@ namespace BoggleConsole
 							}
 
 							return false;
+						case "pause":
+							Pause = true;
+							break;
 						case "verbose":
 							VerboseOutput = true;
 							break;

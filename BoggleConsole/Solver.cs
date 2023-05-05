@@ -9,7 +9,28 @@ namespace BoggleConsole
 	{
 		public Solver()
 		{
-			m_dictionary = File.ReadAllLines(c_dictionaryPath).ToList();
+			using (StreamReader stream = File.OpenText(c_dictionaryPath))
+			{
+				if (int.TryParse(stream.ReadLine(), out int wordCount))
+				{
+					m_dictionary = Array.CreateInstance(typeof(string), wordCount);
+					int index;
+					for (index = 0; index < wordCount; index++)
+					{
+						if (stream.Peek() == -1)
+							throw new Exception($"Failed to read the {wordCount} words specified in {c_dictionaryPath}, read only {index}.");
+
+						m_dictionary.SetValue(stream.ReadLine(), index);
+					}
+
+					if (stream.Peek() > -1)
+						throw new Exception($"After reading the {index} words specified in {c_dictionaryPath}, not at end of file.");
+				}
+				else
+				{
+					throw new Exception($"Failed to read word count from the first line of {c_dictionaryPath}");
+				}
+			}
 		}
 
 
@@ -37,19 +58,19 @@ namespace BoggleConsole
 				ConsoleWriteLine("\nHit a key after each letter is printed\n");
 
 			Console.WriteLine();
+			int[] path = new int[Board.Length];
 			for (int index = 0; index < m_boardLength; index++)
 			{
-				string word = $"{Board[index]}";
-				int[] path = new int[Board.Length];
-				path[index] = 1;
-				string render = BoggleBoard.RenderLetter(word[0]);
-				if (render == "  ")
+				string word = $"{BoggleBoard.RenderLetter(Board[index])}";
+				if (word == "  ")
 					continue;
 
-				ConsoleWriteLine($"Checking from {render} at index {index}:");
-				ConsoleWrite(render);
-				bool found = FindWordsAt(path, word, index);
-				ConsoleEraseLetter(render);
+				path[index] = 1;
+				ConsoleWriteLine($"Checking from {word} at index {index}:");
+				ConsoleWrite(word);
+				bool found = FindWordsAt(path, word.ToUpper(), index);
+				path[index] = 0;
+				ConsoleEraseLetter(word);
 				if (found)
 					ConsoleWriteLine();
 			}
@@ -79,7 +100,7 @@ namespace BoggleConsole
 					continue;
 
 				ConsoleWrite(letter);
-				string test = word + letter;
+				string test = word + letter.ToUpper();
 				bool? isWord = IsWord(test.Trim());
 				if (Step)
 					Console.ReadKey(intercept: true);
@@ -147,18 +168,16 @@ namespace BoggleConsole
 
 		private bool? IsWord(string word)
 		{
-			foreach (string test in m_dictionary)
-			{
-				if (string.Compare(test, word) < 0)
-					continue;
+			int found = Array.BinarySearch(m_dictionary, word);
+			if (found >= 0)
+				return true;
 
-				if (test == word)
-					return true;
-
-				return (test.Length <= word.Length || test.Substring(0, word.Length) != word) ? false : (bool?) null;
-			}
-
-			return false;
+			found = ~found;
+			if (found >= m_dictionary.Length)
+				return false;
+		
+			string nextWord = (string) m_dictionary.GetValue(found);
+			return (word.Length < nextWord.Length && nextWord.Substring(0, word.Length) == word) ? (bool?)null : false;
 		}
 
 		private bool AtRightEdge(int from)
@@ -214,7 +233,7 @@ namespace BoggleConsole
 
 
 		private const string c_dictionaryPath = "Dictionary.txt";
-		private readonly List<string> m_dictionary;
+		private readonly Array m_dictionary;
 		private string m_board;
 		private int m_edgeLength;
 		private int m_boardLength;
