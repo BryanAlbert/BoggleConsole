@@ -68,7 +68,7 @@ namespace BoggleConsole
 				path[index] = 1;
 				ConsoleWriteLine($"Checking from {word} at index {index}:");
 				ConsoleWrite(word);
-				bool found = FindWordsAt(path, word.ToUpper(), index);
+				bool found = FindWordsAt(path, word, index);
 				path[index] = 0;
 				ConsoleEraseLetter(word);
 				if (found)
@@ -100,8 +100,8 @@ namespace BoggleConsole
 					continue;
 
 				ConsoleWrite(letter);
-				string test = word + letter.ToUpper();
-				bool? isWord = IsWord(test.Trim());
+				string test = word + letter;
+				bool? isWord = IsWord(test.Trim().ToUpper());
 				if (Step)
 					Console.ReadKey(intercept: true);
 
