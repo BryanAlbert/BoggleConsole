@@ -44,19 +44,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoggleBoard.cs" />
-    <Compile Include="BigChallenge5x5.cs" />
-    <Compile Include="BigDeluxe5x5.cs" />
-    <Compile Include="Dutch4x4.cs" />
-    <Compile Include="French4x4.cs" />
-    <Compile Include="German4x4.cs" />
-    <Compile Include="New4x4.cs" />
-    <Compile Include="Big20125x5.cs" />
-    <Compile Include="Classic4x4.cs" />
-    <Compile Include="BigClassic5x5.cs" />
+    <Compile Include="Boards\BigChallenge5x5.cs" />
+    <Compile Include="Boards\BigDeluxe5x5.cs" />
+    <Compile Include="Boards\Dutch4x4.cs" />
+    <Compile Include="Boards\French4x4.cs" />
+    <Compile Include="Boards\German4x4.cs" />
+    <Compile Include="Boards\New4x4.cs" />
+    <Compile Include="Boards\Big20125x5.cs" />
+    <Compile Include="Boards\Classic4x4.cs" />
+    <Compile Include="Boards\BigClassic5x5.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Solver.cs" />
-    <Compile Include="SuperBig6x6.cs" />
+    <Compile Include="Boards\SuperBig6x6.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
