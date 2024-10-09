@@ -180,21 +180,21 @@ namespace BoggleConsole
 
 		private static void Usage()
 		{
-			Console.WriteLine("\nUsage: [-?|-help][-Seed seed][-Game numbe][-File filename][-WordSize min][-Pause][-Verbose][-Step]");
-			Console.WriteLine("-help           display this usage message");
-			Console.WriteLine("-Seed           int, seed the random number generator with seed");
-			Console.WriteLine("-Game           the number of the game to play, see below");
-			Console.WriteLine("-File           load the board from the file specified by filename");
-			Console.WriteLine("-WordSize       int, set the minimum word size to min");
-			Console.WriteLine("-Pause          pause before showing the solution");
-			Console.WriteLine("-Verbose        show output for generating and solving the game");
-			Console.WriteLine("-Step           pause when checking each letter");
-			Console.WriteLine("\nBoggle game names:");
+			Console.WriteLine("\nUsage: [-?|-help][-Seed seed][-Game number][-File filename][-WordSize min][-Pause][-Verbose][-Step]");
+			Console.WriteLine("-help      Display this usage message");
+			Console.WriteLine("-Seed      int, seed the random number generator with seed");
+			Console.WriteLine("-Game      The number of the game to play, see below");
+			Console.WriteLine("-File      Load the board from the file specified by filename");
+			Console.WriteLine("-WordSize  int, set the minimum word size to min");
+			Console.WriteLine("-Pause     Pause before showing the solution");
+			Console.WriteLine("-Verbose   Show output for generating and solving the game");
+			Console.WriteLine("-Step      Pause when checking each letter");
+			Console.WriteLine("\nBoggle games:");
 			for (int index = 0; index < m_gameNames.Count; index++)
 				Console.WriteLine($"{index + 1}: {m_gameNames[index]}");
 
 			Console.WriteLine($"\nIf Game and File aren't specified, {m_gameNames[0]} is played.");
-			Console.WriteLine("The board file format uses spaces to deliniate letters, multiple lines are okay, Q represents Qu");
+			Console.WriteLine("The board file format uses spaces to delineate letters, multiple lines are okay, Q represents Qu");
 			Console.Write("and these numbers represent letter combinations: 0 = Blank, ");
 			int number = 1;
 			for (; number < BoggleBoard.m_comboLetters.Length - 1; number++)
